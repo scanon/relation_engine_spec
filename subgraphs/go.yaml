@@ -1,0 +1,8 @@
+id: GO
+name: Gene Ontology
+category: ontology
+url: http://geneontology.org
+vertices: [GO_terms]
+edges:
+  GO_edges: [[GO_terms, GO_terms]]
+  GO_merges: [[GO_terms, GO_terms]]

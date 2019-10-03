@@ -1,0 +1,8 @@
+id: ENVO
+name: Environmental Ontology
+category: ontology
+url: http://www.obofoundry.org/ontology/envo.html
+vertices: [ENVO_terms]
+edges:
+  ENVO_edges: [[ENVO_terms, ENVO_terms]]
+  ENVO_merges: [[ENVO_terms, ENVO_terms]]

@@ -1,0 +1,27 @@
+# JSON schema describing the namespace configuration files found in this directory.
+type: object
+additionalProperties: false
+required: [id, name, vertices, edges]
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  url:
+    type: string
+  category:
+    type: string
+    enum: [taxonomy, ontology]
+  vertices:
+    type: array
+    minLength: 1
+    items: {type: string}
+  edges:
+    type: object
+    patternProperties:
+      # Any key
+      ".":
+        type: array
+        items:
+          type: array
+          items: [{type: string}, {type: string}]

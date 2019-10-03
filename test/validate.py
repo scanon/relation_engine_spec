@@ -35,11 +35,12 @@ schema_schema = {
 
 def validate_json_schemas():
     """Validate the syntax of all the JSON schemas."""
-    print('Validating JSON schemas..')
+    print('Validating JSON schemas')
     names = set()  # type: set
+    schemas = []
     for path in glob.iglob('schemas/**/*.yaml', recursive=True):
         name = os.path.basename(path)
-        print(f'  validating {path}..')
+        print(f'  validating {path}')
         with open(path) as fd:
             data = yaml.safe_load(fd)
         jsonschema.validate(data, schema_schema)
@@ -75,8 +76,8 @@ def validate_json_schemas():
             _fatal('Time-travel vertex schemas must require the "id" attribute in ' + path)
         elif data['type'] == 'vertex' and not data.get('delta') and '_key' not in required:
             _fatal('Vertex schemas must require the "_key" attribute in ' + path)
-        print(f'✓ {name} is valid.')
-    print('..all valid.')
+        schemas.append(data)
+    return schemas
 
 
 stored_query_schema = {
@@ -93,10 +94,10 @@ stored_query_schema = {
 
 def validate_stored_queries():
     """Validate the structure and syntax of all the queries."""
-    print('Validating AQL queries..')
+    print('Validating AQL queries')
     names = set()  # type: set
     for path in glob.iglob('stored_queries/**/*.yaml', recursive=True):
-        print(f'  validating {path}..')
+        print(f'  validating {path}')
         with open(path) as fd:
             data = yaml.safe_load(fd)
         jsonschema.validate(data, stored_query_schema)
@@ -133,8 +134,41 @@ def validate_stored_queries():
             _fatal((f"Bind vars are invalid.\n"
                     f"  Extra vars in query: {query_bind_vars - params}.\n"
                     f"  Extra params in schema: {params - query_bind_vars}"))
-        print(f'✓ {path} is valid.')
-    print('..all valid.')
+
+
+def validate_subgraphs(schemas):
+    """Validate the namespace configuration files found in /subgraphs."""
+    print('Validating subgraphs')
+    ids = set()  # type: set
+    with open('subgraphs/_schema.yaml') as fd:
+        schema = yaml.safe_load(fd)
+    for path in glob.iglob('subgraphs/**/*.yaml', recursive=True):
+        if path.endswith('_schema.yaml'):
+            continue
+        print(f'  validating {path}')
+        with open(path) as fd:
+            data = yaml.safe_load(fd)
+        jsonschema.validate(data, schema)
+        _id = data['id']
+        if _id in ids:
+            _fatal(f'Duplicate namespace id {_id}')
+        ids.add(_id)
+        schema_names = set(c['name'] for c in schemas)
+        verts = set(data['vertices'])
+        # Check that every listed vert has a schema file
+        for v in verts:
+            if v not in schema_names:
+                _fatal(f'Missing schema file for vertex "{v}"')
+        # Validate that each source and dest vertex in edges exists
+        for (name, edge_verts) in data['edges'].items():
+            # Check that the edge name has a schema file
+            if name not in schema_names:
+                _fatal(f'Missing schema file for edge "{name}"')
+            for (src_vert, dest_vert) in edge_verts:
+                if src_vert not in verts:
+                    _fatal('Source vertex {src_vert} for edge {name} does not exist.')
+                if dest_vert not in verts:
+                    _fatal('Destination vertex {dest_vert} for edge {name} does not exist.')
 
 
 def _fatal(msg):
@@ -145,5 +179,6 @@ def _fatal(msg):
 
 if __name__ == '__main__':
     wait_for_arangodb()
-    validate_json_schemas()
+    schemas = validate_json_schemas()
+    validate_subgraphs(schemas)
     validate_stored_queries()
