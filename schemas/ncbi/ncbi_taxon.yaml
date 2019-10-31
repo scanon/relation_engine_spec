@@ -5,12 +5,16 @@ delta: true
 indexes:
   - type: fulltext
     fields: [scientific_name]
+  - type: persistent
+    fields: [id, expired, created]
+  - type: persistent
+    fields: [expired, created, last_version]
 
 schema:
   "$schema": http://json-schema.org/draft-07/schema#
   type: object
   description: Template for a vertex entry in the NCBI taxonomy tree.
-  required: [id, scientific_name, rank]
+  required: [id, scientific_name, rank, strain]
   properties:
     id:
       type: string
@@ -45,13 +49,16 @@ schema:
     rank:
       type: string
       title: Taxonomic rank
-      examples: [Domain, Phylum]
-    numeric_rank:
+      examples: ["Domain", "Phylum", "no rank"]
+    strain:
+      type: boolean
+      title: Strain flag
+      description: Whether this node corresponds to a strain. Strains are considered to be nodes
+        that have a rank of "no rank" and whose parents' rank is either species or subspecies or
+        where the parent's strain flag is true.
+    ncbi_taxon_id:
       type: integer
-      title: Taxonomic level
-    NCBI_taxon_id:
+      title: The NCBI taxon ID as a number
+    gencode:
       type: integer
-      title: NCBI_taxon_id
-    genetic_code:
-      type: integer
-      title: genetic code
+      title: The numerc ID of the genetic code for this organism.
