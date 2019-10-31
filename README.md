@@ -1,6 +1,6 @@
 # Relation Engine Spec
 
-This repo holds the [stored queries](stored_queries), [schemas](schemas), and [namespaces](namespaces) for the relation engine graph database service.
+This repo holds the [stored queries](stored_queries), collection [schemas](schemas), and [subgraphs](subgraphs) for the relation engine graph database service.
 
 These specifications are used by the [Relation Engine API](https://github.com/kbase/relation_engine_api)
 
