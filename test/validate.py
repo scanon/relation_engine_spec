@@ -137,13 +137,17 @@ def validate_stored_queries():
 
 
 def validate_subgraphs(schemas):
-    """Validate the namespace configuration files found in /subgraphs."""
+    """
+    Validate the namespace configuration files found in /subgraphs.
+    Args:
+        schemas - a list of dicts loaded directly from schema yaml files.
+    """
     print('Validating subgraphs')
     ids = set()  # type: set
     with open('subgraphs/_schema.yaml') as fd:
         schema = yaml.safe_load(fd)
     for path in glob.iglob('subgraphs/**/*.yaml', recursive=True):
-        if path.endswith('_schema.yaml'):
+        if os.path.basename(path) == '_schema.yaml':
             continue
         print(f'  validating {path}')
         with open(path) as fd:

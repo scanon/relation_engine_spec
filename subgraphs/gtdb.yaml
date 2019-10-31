@@ -2,6 +2,6 @@ id: GTDB
 name: Genome Taxonomy Database
 category: taxonomy
 url: https://gtdb.ecogenomic.org/
-vertices: [gtdb_organism, gtdb_taxon]
+vertices: [gtdb_taxon]
 edges:
-  gtdb_child_of_taxon: [[gtdb_taxon, gtdb_taxon], [gtdb_organism, gtdb_taxon]]
+  gtdb_child_of_taxon: [[gtdb_taxon, gtdb_taxon]]

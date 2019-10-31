@@ -22,6 +22,8 @@ properties:
       # Any key
       ".":
         type: array
+        description: "array of pairs of vertex names"
         items:
           type: array
+          description: "pair of [vertex1, vertex2] denoting two vertices that this edge connects"
           items: [{type: string}, {type: string}]
