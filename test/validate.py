@@ -146,7 +146,7 @@ def validate_subgraphs(schemas):
     ids = set()  # type: set
     with open('subgraphs/_schema.yaml') as fd:
         schema = yaml.safe_load(fd)
-    for path in glob.iglob('subgraphs/**/*.yaml', recursive=True):
+    for path in glob.iglob('subgraphs/*.yaml', recursive=True):
         if os.path.basename(path) == '_schema.yaml':
             continue
         print(f'  validating {path}')
