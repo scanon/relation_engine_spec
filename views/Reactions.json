@@ -27,6 +27,11 @@
           "analyzers": [
             "text_en"
           ]
+        },
+        "id": {
+          "analyzers": [
+            "text_en"
+          ]
         }
       },
       "includeAllFields": true,
